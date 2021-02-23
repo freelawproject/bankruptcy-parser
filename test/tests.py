@@ -87,9 +87,16 @@ class BankruptcyTest(TestCase):
         filepath = f"{self.root}/test_assets/gov.uscourts.orb.473342.1.0.pdf"
         results = extract_all(filepath=filepath)
 
-        self.assertIn("Jr.", results['info']['debtor_1'])
-        self.assertEqual(results['form_106_sum']['1a'], '325,882.00')
-        self.assertEqual(results['form_106_ef']['creditors'][0]['name'], 'Internal Revenue Service')
-        self.assertEqual(results['form_106_d']['creditors'][0]['name'], 'Ally Financial')
-        self.assertEqual(results['form_106_ab']['cars_land_and_crafts'][1]['make'], 'Chevrolet')
-
+        self.assertIn("Jr.", results["info"]["debtor_1"])
+        self.assertEqual(results["form_106_sum"]["1a"], "325,882.00")
+        self.assertEqual(
+            results["form_106_ef"]["creditors"][0]["name"],
+            "Internal Revenue Service",
+        )
+        self.assertEqual(
+            results["form_106_d"]["creditors"][0]["name"], "Ally Financial"
+        )
+        self.assertEqual(
+            results["form_106_ab"]["cars_land_and_crafts"][1]["make"],
+            "Chevrolet",
+        )
