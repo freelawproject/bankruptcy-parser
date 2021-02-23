@@ -1,6 +1,7 @@
 import codecs
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 VERSION = "0.0.1"
 AUTHOR = "Free Law Project"
@@ -13,8 +14,8 @@ def read(*parts):
     Build an absolute path from *parts* and and return the contents of the
     resulting file.  Assume UTF-8 encoding.
     """
-    with codecs.open(os.path.join(HERE, *parts), "rb", "utf-8") as f:
-        return f.read()
+    with codecs.open(os.path.join(HERE, *parts), "rb", "utf-8") as file:
+        return file.read()
 
 
 setup(
