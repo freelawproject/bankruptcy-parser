@@ -186,8 +186,7 @@ def parse_unsecured_creditors(
     boxes = get_checkboxes(crop)
     lines = crop.filter(remove_margin_lines).lines
     for line in sorted(lines, key=lambda x: x["top"]):
-        left, width = line["x0"], line["width"]
-        if not data and width > 20:
+        if not data and line["width"] > 20:
             continue
         output = crop_and_extract(crop_one, line, adjust=True, up=100)
         if data or (output is not None and key == output.replace("\n", "")):
