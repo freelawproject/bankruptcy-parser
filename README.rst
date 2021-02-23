@@ -1,7 +1,10 @@
-# Bankruptcy
-A bankrputcy document parser.
+Bankruptcy
+==========
 
-# Bankruptcy
+A bankruptcy document parser.
+
+Notes
+==========
 
 Bankruptcy is an open source repository to extract content from bankruptcy documents
 It was built for use with Courtlistener.com.
@@ -10,21 +13,24 @@ Its main goal is to convert bankruptcy documents into readable JSON data.
 
 Further development is intended and all contributors, corrections and additions are welcome.
 
-## Background
+Background
+==========
 
-Free Law Project built this ...  This project represents ...  
+Free Law Project built this ...  This project represents ...
 We believe to be the ....
 
-### Documents
- 
+Documents
+=========
+
 We currently support the following documents in a voluntary petition.
 
-- Bankruptcy Official Form 106 A/B
-- Bankruptcy Official Form 106 D
-- Bankruptcy Official Form 106 E/F
-- Bankruptcy Official Form 106Sum
+- Bankruptcy Official Form 106 A/B (Property)
+- Bankruptcy Official Form 106 D (Secured Creditors)
+- Bankruptcy Official Form 106 E/F (Unsecured Creditors)
+- Bankruptcy Official Form 106Sum (Statistics)
 
 TODOs
+=====
 
 - B 101 (Official Form 101)
 - B2030 (Form 2030) (12/15)
@@ -38,52 +44,63 @@ TODOs
 - Official Form 107
 
 
-## Quickstart
+Quickstart
+==========
 
-You can feed in a X as ... .. ... 
+You can feed in a X as ... .. ...
 
-```
-IMPORTS
+::
 
-CALL EXAMPLE
-
-returns:
-  ""EXAMPLE OUTPUT
-```
+    IMPORTS
 
 
+    CALL EXAMPLE
 
-## Some Notes ...
-Somethings to keep in mind this parser has been tested only on digital PDFs 
+    returns:
+      ""EXAMPLE OUTPUT
+
+
+
+Some Notes
+==========
+
+This tool relies heavily on PDFPlumber.
+
+Somethings to keep in mind this parser has been tested only on digital PDFs
 from recent court filings (ie 2018 and earlier).
 
 
-
-## Installation
+Installation
+===============
 
 Installing bankruptcy is easy.
 
-```sh
-pip install bankruptcy
-```
+::
+
+    pip install bankruptcy
+
 
 
 Or install the latest dev version from github
 
-```sh
-pip install git+https://github.com/freelawproject/bankruptcy.git@master
-```
+::
 
-## Future
+    pip install git+https://github.com/freelawproject/bankruptcy.git@master
+
+
+Future
+==========
 
 1) Continue to improve and add documents for extraction.
 2) Future updates
 
-## Deployment
+Deployment
+==========
 
 Tag a release with a similar format v1.0.0, update setup.py and push to master.
 
-## License
+License
+==========
 
 This repository is available under the permissive BSD license, making it easy and safe to incorporate in your own libraries.
 
