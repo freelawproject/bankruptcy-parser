@@ -37,7 +37,7 @@ def extract_official_form_106_sum(filepath: str) -> Dict:
 
     if not pages:
         # Pages not found, most likely a scanned PDF document.
-        logging.info(f"Pages not found, may not be a vector pdf")
+        logging.info("Pages not found, may not be a vector pdf")
         return {"error": "Failed to find document."}
 
     for page in pages:
