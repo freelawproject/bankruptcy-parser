@@ -21,7 +21,7 @@ setup(
     name="bankruptcy",
     description="A bankruptcy document parser.",
     license="BSD",
-    url="https://github.com/freelawproject/bankruptcy",
+    url="https://github.com/freelawproject/bankruptcy-parser",
     version=VERSION,
     author=AUTHOR,
     author_email=EMAIL,
