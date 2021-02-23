@@ -3,11 +3,11 @@ from glob import iglob
 from unittest import TestCase
 
 from bankruptcy.parser import (
-    extract_official_form_106_sum,
-    extract_official_form_106_e_f,
-    extract_official_form_106_d,
-    extract_official_form_106_a_b,
     extract_all,
+    extract_official_form_106_a_b,
+    extract_official_form_106_d,
+    extract_official_form_106_e_f,
+    extract_official_form_106_sum,
 )
 
 

@@ -1,27 +1,24 @@
 import logging
 from tempfile import NamedTemporaryFile
-from typing import Dict, Union, List, Tuple
+from typing import Dict, List, Tuple, Union
 
-from bankruptcy.fields import (
-    form_106_sum_text_inputs,
-    stats_ef,
-)
+from bankruptcy.fields import form_106_sum_text_inputs, stats_ef
 from bankruptcy.filters import (
     filter_106_sum_boxes,
     filter_106_sum_lines,
     keys_and_input_text,
 )
 from bankruptcy.utils import (
+    can_we_process_pdf,
     convert_pdf,
     crop_and_extract,
+    extract_other_creditors,
     get_1_to_2_from_a_b,
     get_3_to_8_form_a_b,
     get_106_sum_pages,
     get_page_and_lines,
-    parse_unsecured_creditors,
     parse_secured_creditors,
-    extract_other_creditors,
-    can_we_process_pdf,
+    parse_unsecured_creditors,
 )
 
 

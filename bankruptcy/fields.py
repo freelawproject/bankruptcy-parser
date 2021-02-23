@@ -1,6 +1,6 @@
 import re
 import string
-from typing import List, Dict
+from typing import Dict, List
 
 property_options = [
     "Single-family home",

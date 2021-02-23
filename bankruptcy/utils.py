@@ -1,27 +1,27 @@
 import re
-from typing import List, Dict, Tuple, Union, Any, Optional, Iterator
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import pdfplumber
-from PyPDF2 import PdfFileWriter, PdfFileReader
+from PyPDF2 import PdfFileReader, PdfFileWriter
 from PyPDF2.pdf import PageObject
 
 from bankruptcy.fields import (
+    make_ab_totals,
     make_car_dict,
+    make_creditor_dict,
     make_other_dict,
     make_property_dict,
-    make_ab_totals,
-    make_creditor_dict,
     make_secured_creditor_dict,
     property_options,
 )
 from bankruptcy.filters import (
-    line_filter,
-    just_text_filter,
-    keys_and_input_text,
-    key_filter,
-    input_white_text_and_left_side,
     filter_106_ab_content,
     filter_boxes,
+    input_white_text_and_left_side,
+    just_text_filter,
+    key_filter,
+    keys_and_input_text,
+    line_filter,
     remove_margin_lines,
 )
 

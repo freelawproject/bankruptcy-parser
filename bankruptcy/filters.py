@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 
 def filter_106_sum_lines(obj: dict) -> Optional[bool]:
