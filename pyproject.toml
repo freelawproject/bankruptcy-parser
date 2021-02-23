@@ -14,13 +14,13 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-description = "{{PROJECT_DESCRIPTION}}"
+description = "Bankruptcy parser"
 keywords = ["legal", "courts"]
 license = "BSD-2-Clause"
 maintainers = ["Free Law Project <info@free.law>"]
-name = "{{PROJECT_NAME}}"
+name = "Bankruptcy"
 readme = "README.md"
-repository = "https://github.com/freelawproject/{{PROJECT_NAME}}"
+repository = "https://github.com/freelawproject/bankruptcy-parser"
 version = "0.0.1"
 
 [tool.poetry.urls]
