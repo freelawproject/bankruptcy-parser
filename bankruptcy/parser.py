@@ -162,7 +162,9 @@ def extract_official_form_106_d(
             if line["width"] > 530:
                 # Sometimes there are weird lines. Boxes are not lines
                 if len(markers) > 4:
-                    creditors = extract_other_creditors_d(page, markers, creditors)
+                    creditors = extract_other_creditors_d(
+                        page, markers, creditors
+                    )
                 markers = []
 
         # Main Sections
