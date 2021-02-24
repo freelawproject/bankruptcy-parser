@@ -180,5 +180,6 @@ def make_secured_creditor_dict(data: List[str], checkboxes: Dict) -> Dict:
         "debtor": checkboxes["debtor"],
         "info": checkboxes["info"],
         "claim_type": checkboxes["claim_type"],
+        "community": checkboxes['community'],
         "other_creditors": [],
     }

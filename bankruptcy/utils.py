@@ -44,10 +44,8 @@ def crop_and_extract(
     page: pdfplumber.pdf.Page,
     line: Dict,
     adjust=False,
-    left: int = 0,
-    up: int = 20,
-    down: int = 0,
-    right: int = 0,
+    left_shift: int = 0,
+    up_shift: int = 20,
 ) -> str:
     """Extract text content for pdf line if any
 
@@ -56,17 +54,15 @@ def crop_and_extract(
     :param page: Page to crop
     :param line: Line to crop around
     :param adjust: Whether to check if another line is inside our crop
-    :param left: Leftward crop adjustment
-    :param up: Upward crop adjustment
-    :param down: Downward crop adjustment
-    :param right: Rightward crop adjustment
+    :param left_shift: Leftward crop adjustment
+    :param up_shift: Upward crop adjustment
     :return: Content of the section
     """
     bbox = (
-        int(line["x0"]) - left,
-        int(line["top"]) - up,
-        line["x1"] - right,
-        line["top"] - down,
+        int(line["x0"]) - left_shift,
+        int(line["top"]) - up_shift,
+        line["x1"],
+        line["top"],
     )
     crop = page.crop(bbox)
     if adjust:
@@ -103,15 +99,13 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
     with pdfplumber.open(filepath) as pdf:
         for page in pdf.pages:
             text = page.extract_text()
-            m = text[-300:].find(form)
-            if m == -1:
+            if text[-300:].find(form) == -1:
                 continue
-            m = text[-300:].lower().find("page")
-            if m == -1:
+            if text[-300:].lower().find("page") == -1:
                 continue
             pages.append(page.page_number)
 
-    if len(pages) == 0:
+    if not pages:
         return False
 
     writer = PdfFileWriter()
@@ -123,31 +117,32 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
             last = first + 1
 
         page = pdf.getPage(first)  # We pick the second page here
-        h = page.mediaBox.getHeight()
-        w = page.mediaBox.getWidth()
+        height = page.mediaBox.getHeight()
+        width = page.mediaBox.getWidth()
 
-        t_page = PageObject.createBlankPage(None, w, h * (last - first + 1))
+        t_page = PageObject.createBlankPage(
+            None, width, height * (last - first + 1)
+        )
         length = last - first
 
         if length == 1:
             writer.addPage(page)
-            with open(temp_output, "wb") as f:
-                writer.write(f)
-            return True
+            with open(temp_output, "wb") as file:
+                writer.write(file)
+        else:
+            for pg_number in range(first, last):
+                page = pdf.getPage(pg_number)
+                t_page.mergeScaledTranslatedPage(
+                    page2=page, scale=1, tx=0, ty=height * length, expand=False
+                )
+                length -= 1
+                if not length:
+                    last_page = pdf.getPage(last)
+                    t_page.mergePage(last_page)
+                    writer.addPage(t_page)
 
-        for pg_number in range(first, last):
-            page = pdf.getPage(pg_number)
-            t_page.mergeScaledTranslatedPage(
-                page2=page, scale=1, tx=0, ty=h * length, expand=False
-            )
-            length -= 1
-            if not length:
-                last_page = pdf.getPage(last)
-                t_page.mergePage(last_page)
-                writer.addPage(t_page)
-
-        with open(temp_output, "wb") as f:
-            writer.write(f)
+            with open(temp_output, "wb") as file:
+                writer.write(file)
 
     print(f"Converted {form}, with {1+last-first} pages, {first} to {last}")
     return True
@@ -188,7 +183,7 @@ def parse_unsecured_creditors(
     for line in sorted(lines, key=lambda x: x["top"]):
         if not data and line["width"] > 20:
             continue
-        output = crop_and_extract(crop_one, line, adjust=True, up=100)
+        output = crop_and_extract(crop_one, line, adjust=True, up_shift=100)
         if data or (output is not None and key == output.replace("\n", "")):
             if (
                 len(data) == 10
@@ -200,10 +195,11 @@ def parse_unsecured_creditors(
             data.append(output)
     if data:
         return make_creditor_dict(data, boxes, key)
+    return {}
 
 
-def extract_other_creditors(
-    page: pdfplumber.pdf.Page, start: Dict, stop: Dict
+def extract_other_creditors_ef(
+    page: pdfplumber.pdf.Page, start: Dict, stop: Dict, creditors: List
 ) -> Dict:
     """Process other creditors to be notified if any
 
@@ -220,8 +216,15 @@ def extract_other_creditors(
     key = page.crop(key_bbox).filter(just_text_filter).extract_text()
     address = page.crop(addy_bbox).filter(keys_and_input_text).extract_text()
     acct = page.crop(acct_bbox).filter(keys_and_input_text).extract_text()
+    for creditor in creditors:
+        if creditor["key"] == str(key):
+            other_creditors = creditor["other_creditors"]
+            other_creditors.append(
+                {"address": address, "acct": acct, "key": key}
+            )
+            creditor["other_creditors"] = other_creditors
 
-    return {"address": address, "acct": acct, "key": key}
+    return creditors
 
 
 # 106 D
@@ -240,22 +243,28 @@ def parse_secured_creditors(
     key = section.filter(key_filter).extract_text()
     checkboxes = get_checkboxes(section)
     data = []
-    lines = section.filter(remove_margin_lines).lines
 
-    for line in sorted(lines, key=lambda x: x["top"]):
-        x0, x1, top = line["x0"], line["x1"], int(line["top"])
+    for line in sorted(
+        section.filter(remove_margin_lines).lines, key=lambda x: x["top"]
+    ):
+        top = int(line["top"])
         if not data and line["width"] > 20:
             continue
-        page_crop = page.crop((x0, top - 200, x1, top))
-        tops = [row["top"] for row in page_crop.lines if row["top"] != top]
-        bbox = (line["x0"], tops[-1], line["x1"], line["top"])
+        page_crop = page.crop((line["x0"], top - 200, line["x1"], top))
+        tops = [
+            row["top"] for row in page_crop.lines if int(row["top"]) != top
+        ]
         if len(tops) > 0:
             if len(data) == 6:
-                page_crop = page.crop((x0, tops[-1] - 20, x1, top))
+                page_crop = page.crop(
+                    (line["x0"], tops[-1] - 20, line["x1"], top)
+                )
             elif len(data) == 8:
-                page_crop = page.crop((x0, top - 50, x1, top))
+                page_crop = page.crop((line["x0"], top - 50, line["x1"], top))
             else:
-                page_crop = page.crop(bbox)
+                page_crop = page.crop(
+                    (line["x0"], tops[-1], line["x1"], line["top"])
+                )
         output = page_crop.filter(keys_and_input_text).extract_text()
 
         if data or key == output:
@@ -263,6 +272,7 @@ def parse_secured_creditors(
 
     if data and len(data) > 10:
         return make_secured_creditor_dict(data, checkboxes)
+    return {}
 
 
 def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
@@ -280,15 +290,15 @@ def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
             y_tolerance=tolerance
         )
         if "[]" not in filtered_data:
-            "Checkboxes unreadable"
+            # Checkboxes unreadable
             return {}
         filtered_lines = filtered_data.splitlines()
         checkboxes = [x.replace("  ", " ") for x in filtered_lines if "[" in x]
-        q1 = ["debtor"]
-        q2 = ["community", "see instructions"]
-        q3 = ["No", "Yes"]
-        q4 = ["contingent", "unliquidated", "disputed"]
-        q5 = [
+        query1 = ["debtor"]
+        query2 = ["community", "see instructions", "claim relates"]
+        query3 = ["No", "Yes"]
+        query4 = ["contingent", "unliquidated", "disputed"]
+        query5 = [
             "domestic",
             "taxes",
             "death",
@@ -305,27 +315,27 @@ def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
         debtor = [
             box.split(" ", 1)[1].strip()
             for box in checkboxes
-            if "√" in box and any(s in box.lower() for s in q1)
+            if "√" in box and any(s in box.lower() for s in query1)
         ]
         community = [
             box.split(" ", 1)[1].strip()
             for box in checkboxes
-            if "√" in box and any(s in box.lower() for s in q2)
+            if "√" in box and any(s in box.lower() for s in query2)
         ]
         offset = [
             box.split(" ", 1)[1].strip()
             for box in checkboxes
-            if "√" in box and any(s in box for s in q3)
+            if "√" in box and any(s in box for s in query3)
         ]
         info = [
             box.split(" ", 1)[1].strip()
             for box in checkboxes
-            if "√" in box and any(s in box.lower() for s in q4)
+            if "√" in box and any(s in box.lower() for s in query4)
         ]
         claim_type = [
             box.split(" ", 1)[1].strip()
             for box in checkboxes
-            if "√" in box and any(s in box.lower() for s in q5)
+            if "√" in box and any(s in box.lower() for s in query5)
         ]
 
         property_values = [
@@ -371,7 +381,7 @@ def find_property_sections(
         for row in rows
         if len(row["text"]) > 2
         and row["text"][0] in "P12345"
-        and "." == row["text"][1]
+        and row["text"][1] == "."
     ]
     if len(rows) == 0:
         return None
@@ -403,28 +413,28 @@ def get_1_to_2_from_a_b(only_page: pdfplumber.pdf.Page) -> List[Dict]:
         data = get_all_values_from_crop(crop.lines, only_page)
 
         if "1." in key:
-            cd = make_property_dict(key, data)
+            section = make_property_dict(key, data)
             checkboxes = get_checkboxes(crop)
             if not checkboxes:
-                cd["property_interest"] = "Checkbox unreadable"
-                cd["debtor"] = "Checkbox unreadable"
+                section["property_interest"] = "Checkbox unreadable"
+                section["debtor"] = "Checkbox unreadable"
             else:
-                cd["property_interest"] = checkboxes["property"]
-                cd["debtor"] = checkboxes["debtor"]
-            property_content.append(cd)
+                section["property_interest"] = checkboxes["property"]
+                section["debtor"] = checkboxes["debtor"]
+            property_content.append(section)
 
         if "3." in key or "4." in key:
             if "3." in key:
-                cd = make_car_dict(key, data)
+                section = make_car_dict(key, data)
             else:
-                cd = make_other_dict(key, data)
+                section = make_other_dict(key, data)
 
             checkboxes = get_checkboxes(crop)
             if not checkboxes:
-                cd["debtor"] = "Checkbox unreadable"
+                section["debtor"] = "Checkbox unreadable"
             else:
-                cd["debtor"] = checkboxes["debtor"]
-            property_content.append(cd)
+                section["debtor"] = checkboxes["debtor"]
+            property_content.append(section)
 
     return property_content
 
@@ -438,8 +448,8 @@ def get_ab_debtors(rows: List) -> List:
 
     debtors = [rows[1]]
     if "[" not in rows[2]:
-        m = re.match(r"\d", rows[2][0])
-        if not m:
+        match = re.match(r"\d", rows[2][0])
+        if not match:
             debtors.append(rows[2])
     return debtors
 
@@ -479,14 +489,14 @@ def get_3_to_8_form_a_b(
         rows = [r for r in rows if debtor not in r]
 
     for row in rows[1:]:
-        p = re.match(r"Part \d:", row)
-        if p:
+        match = re.match(r"Part \d:", row)
+        if match:
             part += 1
             continue
         # Extract parts 3 to 7
         if part in [3, 4, 5, 6, 7]:
-            m = re.match(r"^\d{1,2}\. ?|^5", row)
-            if not m:
+            match = re.match(r"^\d{1,2}\. ?|^5", row)
+            if not match:
                 data.append(row)
                 continue
             if section == row:
@@ -526,6 +536,51 @@ def get_all_values_from_crop(
     for line in lines:
         if line["width"] < 10:
             continue
-        output = crop_and_extract(page, line, adjust=True, up=100)
+        output = crop_and_extract(page, line, adjust=True, up_shift=100)
         data.append(output)
     return data
+
+
+def extract_other_creditors_d(
+    page: pdfplumber.pdf.Page, markers: List[Dict], creditors: List
+) -> None:
+    """Crop and extract address, key and acct # from the PDf
+
+    :param page: PDF page
+    :param markers: The top and bottom markers
+    :return: Address, key and account information
+    """
+    adjust = 0 if len(markers) == 5 else 12
+
+    addy_bbox = (
+        0,
+        markers[0]["top"],
+        int(markers[-1]["x1"]) * 0.35,
+        markers[-1]["top"],
+    )
+    key_bbox = (
+        markers[-3]["x0"],
+        markers[0]["top"] - adjust,
+        markers[-3]["x1"],
+        markers[-3]["top"],
+    )
+    acct_bbox = (
+        markers[1]["x0"],
+        markers[1]["top"] - 12,
+        markers[1]["x1"],
+        markers[1]["top"],
+    )
+
+    address = page.crop(addy_bbox).filter(keys_and_input_text).extract_text()
+    key = (
+        page.crop(key_bbox).filter(keys_and_input_text).extract_text().strip()
+    )
+    acct = page.crop(acct_bbox).filter(keys_and_input_text).extract_text()
+    for creditor in creditors:
+        if creditor["key"] == key:
+            other_creditors = creditor["other_creditors"]
+            other_creditors.append(
+                {"key": key, "address": address, "acct": acct}
+            )
+            creditor["other_creditors"] = other_creditors
+    return creditors

@@ -54,11 +54,12 @@ def keys_and_input_text(obj: dict) -> Optional[bool]:
 
     if "fontname" in obj.keys():
         if obj["x0"] < 50:
-            m = re.match(r"[0-9.]", obj["text"])
-            if m:
+            matches = re.match(r"[0-9.]", obj["text"])
+            if matches:
                 return True
         if 9.1 > obj["size"] > 8.5:
             return obj["fontname"] != "ArialMT"
+    return False
 
 
 def just_text_filter(obj: dict) -> Optional[bool]:
@@ -70,9 +71,10 @@ def just_text_filter(obj: dict) -> Optional[bool]:
 
     if "fontname" in obj.keys():
         if 9.1 > obj["size"] > 8.5:
-            m = re.match(r"[0-9.]", obj["text"])
-            if m:
+            matches = re.match(r"[0-9.]", obj["text"])
+            if matches:
                 return True
+    return False
 
 
 def key_filter(obj: dict) -> Optional[bool]:
@@ -83,9 +85,10 @@ def key_filter(obj: dict) -> Optional[bool]:
     """
     if "fontname" in obj.keys():
         if obj["x0"] < 50:
-            m = re.match(r"[0-9.]", obj["text"])
-            if m:
+            matches = re.match(r"[0-9.]", obj["text"])
+            if matches:
                 return True
+    return False
 
 
 def input_white_text_and_left_side(obj: dict) -> Optional[bool]:
@@ -97,9 +100,10 @@ def input_white_text_and_left_side(obj: dict) -> Optional[bool]:
     if obj["non_stroking_color"] == 1 and obj["top"] > 100:
         return True
     if obj["x0"] < 50 and "text" in obj.keys() and obj["top"] > 100:
-        m = re.match(r"[0-9.]", obj["text"])
-        if m:
+        matches = re.match(r"[0-9.]", obj["text"])
+        if matches:
             return True
+    return False
 
 
 def filter_106_ab_content(obj: dict) -> Optional[bool]:
@@ -111,8 +115,8 @@ def filter_106_ab_content(obj: dict) -> Optional[bool]:
     if obj["non_stroking_color"] == 1:
         return True
     if obj["x0"] < 50 and "text" in obj.keys():
-        m = re.match(r"[0-9.]", obj["text"])
-        if m:
+        matches = re.match(r"[0-9.]", obj["text"])
+        if matches:
             return True
     if "text" in obj.keys() and "Wingdings" in obj["fontname"]:
         if (
@@ -121,20 +125,20 @@ def filter_106_ab_content(obj: dict) -> Optional[bool]:
             or "n" in obj["text"]
         ):
             obj["text"] = "[√]"
-            return True
         if (
             "cid:134" in obj["text"]
             or "" in obj["text"]
             or "o" in obj["text"]
         ):
             obj["text"] = "[]"
-            return True
+        return True
     if "text" in obj.keys():
         font = obj["fontname"]
         if font in ["ArialMT", "Arial-ItalicMT", "WQPAYT+LiberationSans"]:
             return False
         if 9.1 > obj["size"] > 8.5:
             return True
+    return False
 
 
 def filter_boxes(obj: Dict) -> True:
@@ -162,10 +166,10 @@ def filter_boxes(obj: Dict) -> True:
 def remove_margin_lines(obj: Dict) -> bool:
     """Remove the lines that are inside the margins
 
+    Useful  for 106 D and E/F - mostly for split pages
     :param obj: PDF character
     :return: True or False
     """
-    """Useful  for 106 D and E/F"""
     if obj["width"] < 10:
         return False
     if 70 < obj["x0"] < 75:

@@ -47,7 +47,7 @@ class BankruptcyTest(TestCase):
         """Can we extract content for unsecured creditors"""
 
         filepath = f"{self.root}/test_assets/gov.uscourts.orb.473342.1.0.pdf"
-        results, debtor1, debtor2 = extract_official_form_106_e_f(
+        results = extract_official_form_106_e_f(
             filepath=filepath
         )
         self.assertEqual(
