@@ -89,7 +89,7 @@ Or install the latest dev version from github
 
 
 Future
-==========
+======
 
 1) Continue to improve and add documents for extraction.
 2) Future updates
