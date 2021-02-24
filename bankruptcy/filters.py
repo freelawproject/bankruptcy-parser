@@ -58,7 +58,7 @@ def keys_and_input_text(obj: dict) -> Optional[bool]:
             if matches:
                 return True
         if 9.1 > obj["size"] > 8.5:
-            return obj["fontname"] != "ArialMT"
+            return bool(obj["fontname"] != "ArialMT")
     return False
 
 
@@ -141,7 +141,7 @@ def filter_106_ab_content(obj: dict) -> Optional[bool]:
     return False
 
 
-def filter_boxes(obj: Dict) -> True:
+def filter_boxes(obj: Dict) -> bool:
     """Convert all checkboxes to uniform [√] or []
 
     :param obj: PDF character
