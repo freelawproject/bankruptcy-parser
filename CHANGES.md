@@ -2,8 +2,9 @@
 
 ## Current
 
-0.0.1 - Intiial release
+0.0.3 - Update to E/F document extraction
 
 ## Past
 
-No past releases yet.
+0.0.2 - Update setup file to correct missing requirements
+0.0.1 - Initial release
