@@ -229,7 +229,7 @@ def extract_all(filepath: str) -> Union[Dict, bool]:
     return {
         "info": {
             "debtor_1": form_106_ef["debtor1"],
-            "debtor_2": form_106_ef["debtor1"],
+            "debtor_2": form_106_ef["debtor2"],
         },
         "form_106_ab": form_106_ab,
         "form_106_d": form_106_d,
