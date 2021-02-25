@@ -287,9 +287,13 @@ def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
     :return: Dictionary of selected checkboxes
     """
     results = {}
-    for tolerance in [3, 5]:
+    # Use multiple tolerances to line up checkboxes on weird PDFs
+    for tolerance in [3, 4, 5]:
         filtered_data = crop.filter(filter_boxes).extract_text(
             y_tolerance=tolerance
+        )
+        filtered_data = filtered_data.replace(
+            "Type of NONPRIORITY unsecured claim:", ""
         )
         if "[]" not in filtered_data:
             # Checkboxes unreadable
@@ -351,6 +355,9 @@ def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
             if any(s in box for box in property_values)
         ]
 
+        if claim_type:
+            if "Specify" in claim_type[0]:
+                claim_type = ["Other. Specify"]
         data = {
             "debtor": debtor,
             "community": community,
@@ -362,9 +369,13 @@ def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
         if not results:
             results = data
         else:
-            data = [{k: v} for k, v in data.items() if v != []]
+            datum = [{k: v} for k, v in data.items() if v != []]
+            data = {}
+            for item in datum:
+                data = {**data, **item}
+
             results = {**results, **data}
-        return results
+    return results
 
 
 def find_property_sections(
