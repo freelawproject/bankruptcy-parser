@@ -2,7 +2,7 @@ import os
 from glob import iglob
 from unittest import TestCase
 
-from bankruptcy.parser import (
+from bankruptcy import (
     extract_all,
     extract_official_form_106_a_b,
     extract_official_form_106_d,
