@@ -17,6 +17,7 @@ def read(*parts):
     with codecs.open(os.path.join(HERE, *parts), "rb", "utf-8") as file:
         return file.read()
 
+
 reqs_path = HERE + "/requirements.txt"
 with open(reqs_path) as reqs_file:
     reqs = reqs_file.read().splitlines()
@@ -32,7 +33,7 @@ setup(
     author_email=EMAIL,
     maintainer=AUTHOR,
     maintainer_email=EMAIL,
-    keywords=["legal", "document", "bankruptcy", 'PDF', "form"],
+    keywords=["legal", "document", "bankruptcy", "PDF", "form"],
     long_description=read("README.rst"),
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
