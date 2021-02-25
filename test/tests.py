@@ -42,6 +42,7 @@ class BankruptcyTest(TestCase):
         self.assertTrue(results["7/11/13"])
         self.assertTrue(results["non_consumer_debts"])
         self.assertEqual(results["3_total"], "863,842.00")
+        self.assertEqual(results["9g"], "142,500.00")
 
     def test_official_form_106_e_f(self):
         """Can we extract content for unsecured creditors"""
@@ -87,6 +88,7 @@ class BankruptcyTest(TestCase):
 
         self.assertIn("Jr.", results["info"]["debtor_1"])
         self.assertEqual(results["form_106_sum"]["1a"], "325,882.00")
+        self.assertEqual(results["form_106_sum"]["9g"], "142,500.00")
         self.assertEqual(
             results["form_106_ef"]["creditors"][0]["name"],
             "Internal Revenue Service",
