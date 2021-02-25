@@ -21,7 +21,7 @@ maintainers = ["Free Law Project <info@free.law>"]
 name = "Bankruptcy"
 readme = "README.md"
 repository = "https://github.com/freelawproject/bankruptcy-parser"
-version = "0.0.4"
+version = "0.0.5"
 
 [tool.poetry.urls]
 "Organisation Homepage" = "https://free.law/"

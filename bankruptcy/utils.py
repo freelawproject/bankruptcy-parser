@@ -333,6 +333,8 @@ def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
             for box in checkboxes
             if "√" in box and any(s in box for s in query3)
         ]
+        offset = [ans for ans in offset if re.match(r"^(Yes|No)$", ans)]
+
         info = [
             box.split(" ", 1)[1].strip()
             for box in checkboxes
