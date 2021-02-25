@@ -3,7 +3,7 @@ import os
 
 from setuptools import find_packages, setup
 
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 AUTHOR = "Free Law Project"
 EMAIL = "info@free.law"
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -17,6 +17,10 @@ def read(*parts):
     with codecs.open(os.path.join(HERE, *parts), "rb", "utf-8") as file:
         return file.read()
 
+reqs_path = HERE + "/requirements.txt"
+with open(reqs_path) as reqs_file:
+    reqs = reqs_file.read().splitlines()
+
 
 setup(
     name="bankruptcy",
@@ -28,11 +32,10 @@ setup(
     author_email=EMAIL,
     maintainer=AUTHOR,
     maintainer_email=EMAIL,
-    keywords=["legal", "courts", "bankruptcy"],
+    keywords=["legal", "document", "bankruptcy", 'PDF', "form"],
     long_description=read("README.rst"),
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
-    package_data={"courts_db": ["data/*", "data/places/*", "*"]},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
@@ -48,6 +51,6 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    install_requires=["six"],
+    install_requires=reqs,
     test_suite="tests",
 )
