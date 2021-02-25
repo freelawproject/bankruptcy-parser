@@ -52,6 +52,7 @@ class BankruptcyTest(TestCase):
         self.assertEqual(
             len(results["creditors"]), 19, msg="Failed to extract creditors"
         )
+        self.assertEqual(results["creditors"][-1]["debtor"], ['At least one of the debtors and another'])
 
     def test_official_form_106_d(self):
         """Can we extract secured creditors from form 106D"""
