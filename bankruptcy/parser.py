@@ -41,11 +41,14 @@ def extract_official_form_106_sum(filepath: str) -> Dict:
 
         for line in page.filter(filter_106_sum_lines).lines:
             output = crop_and_extract(page, line, adjust=True, left_shift=5)
-            if output:
-                inputs.append(output)
+            inputs.append(output)
 
     if not inputs:
         return {}
+
+    # Remove blank inputs
+    for item in [6, 7, 10, -1, -2]:
+        inputs.pop(item)
 
     # Analyze Text Inputs
     text_inputs = dict(zip(form_106_sum_text_inputs, inputs))

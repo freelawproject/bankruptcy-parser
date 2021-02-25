@@ -32,12 +32,14 @@ def get_106_sum_pages(filepath: str) -> List:
     :param filepath:
     :return:
     """
+    pages_106 = []
     with pdfplumber.open(filepath) as pdf:
         pages = pdf.pages
         for page in pages:
             if page.extract_text()[-300:].find("Official Form 106Sum") == -1:
                 continue
-            return pages[page.page_number - 1 : page.page_number]
+            pages_106.append(page)
+    return pages_106
 
 
 def crop_and_extract(
