@@ -28,7 +28,7 @@ version = "0.0.5"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-pdfplumber = "^0.5.26"
+pdfplumber = "^0.5.27"
 pytest = "^6.2.2"
 PyPDF2 = "^1.26.0"
 pylint = "^2.7.1"
