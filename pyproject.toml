@@ -31,7 +31,7 @@ python = "^3.7"
 pdfplumber = "^0.5.26"
 pytest = "^6.2.2"
 PyPDF2 = "^1.26.0"
-pylint = "^2.7.1"
+pylint = "^2.8.2"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
