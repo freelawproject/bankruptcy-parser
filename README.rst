@@ -49,16 +49,7 @@ Quickstart
     from bankruptcy import extract_all
     results = extract_all(filepath=filepath)
 
-will return a dictionary of the forms (if found) and the contents of the document in the following format.
-
-
-    {
-     'form_106_ab': ...
-     'form_106_d': ...
-     'form_106_ef': ...
-     'form_106_sum': ...
-     'info'...
-    }
+will return a dictionary of the forms (if found) and the contents of the document.
 
 
 Some Notes

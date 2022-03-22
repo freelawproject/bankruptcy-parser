@@ -35,6 +35,7 @@ setup(
     maintainer_email=EMAIL,
     keywords=["legal", "document", "bankruptcy", "PDF", "form"],
     long_description=read("README.rst"),
+    long_description_content_type="text/x-rst",
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
     classifiers=[
