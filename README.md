@@ -16,8 +16,7 @@ Further development is intended and all contributors, corrections and additions 
 Background
 ==========
 
-Free Law Project built this ...  This project represents ...
-We believe to be the ....
+This was built to help extract content from bankruptcy documents.
 
 Documents
 =========
@@ -47,18 +46,19 @@ TODOs
 Quickstart
 ==========
 
-You can feed in a X as ... .. ...
+    from bankruptcy import extract_all
+    results = extract_all(filepath=filepath)
 
-::
-
-    IMPORTS
+will return a dictionary of the forms (if found) and the contents of the document in the following format.
 
 
-    CALL EXAMPLE
-
-    returns:
-      ""EXAMPLE OUTPUT
-
+    {
+     'form_106_ab': ...
+     'form_106_d': ...
+     'form_106_ef': ...
+     'form_106_sum': ...
+     'info'...
+    }  
 
 
 Some Notes
@@ -67,7 +67,8 @@ Some Notes
 This tool relies heavily on PDFPlumber.
 
 Somethings to keep in mind this parser has been tested only on digital PDFs
-from recent court filings (ie 2018 and earlier).
+from recent court filings (ie 2018 and earlier).  This parser does not work on scanned
+bankruptcy documents and was built and tested on documents from the Pacific Northwest.
 
 
 Installation
@@ -79,14 +80,17 @@ Installing bankruptcy is easy.
 
     pip install bankruptcy
 
-
-
 Or install the latest dev version from github
 
 ::
 
     pip install git+https://github.com/freelawproject/bankruptcy.git@master
 
+
+Testing
+==========
+
+    python3 -m unittest test.tests
 
 Future
 ======

@@ -1,6 +1,11 @@
+#!/usr/bin/env python3
 import os
 from glob import iglob
 from unittest import TestCase
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from bankruptcy import (
     extract_all,
@@ -29,10 +34,11 @@ class BankruptcyTest(TestCase):
 
         filepath = f"{self.assets}/gov.uscourts.ganb.1125040.35.0.pdf"
         results = extract_all(filepath=filepath)
-        self.assertEqual(
-            results["form_106_d"]["error"], "Failed to find document."
-        )
+        self.assertEqual(results["form_106_d"]["error"], "Failed to find document.")
         self.assertEqual(len(results["form_106_ef"]["creditors"]), 22)
+        import pprint
+
+        pprint.pprint(results)
 
     def test_offical_form_106_sum(self):
         """Can we extract content from Official Form 106 Sum"""
@@ -52,7 +58,10 @@ class BankruptcyTest(TestCase):
         self.assertEqual(
             len(results["creditors"]), 19, msg="Failed to extract creditors"
         )
-        self.assertEqual(results["creditors"][-1]["debtor"], ['At least one of the debtors and another'])
+        self.assertEqual(
+            results["creditors"][-1]["debtor"],
+            ["At least one of the debtors and another"],
+        )
 
     def test_official_form_106_d(self):
         """Can we extract secured creditors from form 106D"""

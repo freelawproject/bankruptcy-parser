@@ -122,9 +122,7 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
         height = page.mediaBox.getHeight()
         width = page.mediaBox.getWidth()
 
-        t_page = PageObject.createBlankPage(
-            None, width, height * (last - first + 1)
-        )
+        t_page = PageObject.createBlankPage(None, width, height * (last - first + 1))
         length = last - first
 
         if length == 1:
@@ -166,9 +164,7 @@ def get_page_and_lines(
     return only_page, sorted_lines
 
 
-def parse_unsecured_creditors(
-    page: pdfplumber.pdf.Page, top: int, bottom: int
-) -> Dict:
+def parse_unsecured_creditors(page: pdfplumber.pdf.Page, top: int, bottom: int) -> Dict:
     """Extract the information on the unsecured creditor section
 
     :param page: PDF page
@@ -187,12 +183,7 @@ def parse_unsecured_creditors(
             continue
         output = crop_and_extract(crop_one, line, adjust=True, up_shift=100)
         if data or (output is not None and key == output.replace("\n", "")):
-            if (
-                len(data) == 10
-                and "2." in key
-                or len(data) == 8
-                and "4." in key
-            ):
+            if len(data) == 10 and "2." in key or len(data) == 8 and "4." in key:
                 continue
             data.append(output)
     if data:
@@ -221,9 +212,7 @@ def extract_other_creditors_ef(
     for creditor in creditors:
         if creditor["key"] == str(key):
             other_creditors = creditor["other_creditors"]
-            other_creditors.append(
-                {"address": address, "acct": acct, "key": key}
-            )
+            other_creditors.append({"address": address, "acct": acct, "key": key})
             creditor["other_creditors"] = other_creditors
 
     return creditors
@@ -253,20 +242,14 @@ def parse_secured_creditors(
         if not data and line["width"] > 20:
             continue
         page_crop = page.crop((line["x0"], top - 200, line["x1"], top))
-        tops = [
-            row["top"] for row in page_crop.lines if int(row["top"]) != top
-        ]
+        tops = [row["top"] for row in page_crop.lines if int(row["top"]) != top]
         if len(tops) > 0:
             if len(data) == 6:
-                page_crop = page.crop(
-                    (line["x0"], tops[-1] - 20, line["x1"], top)
-                )
+                page_crop = page.crop((line["x0"], tops[-1] - 20, line["x1"], top))
             elif len(data) == 8:
                 page_crop = page.crop((line["x0"], top - 50, line["x1"], top))
             else:
-                page_crop = page.crop(
-                    (line["x0"], tops[-1], line["x1"], line["top"])
-                )
+                page_crop = page.crop((line["x0"], tops[-1], line["x1"], line["top"]))
         output = page_crop.filter(keys_and_input_text).extract_text()
 
         if data or key == output:
@@ -289,9 +272,7 @@ def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
     results = {}
     # Use multiple tolerances to line up checkboxes on weird PDFs
     for tolerance in [3, 4, 5]:
-        filtered_data = crop.filter(filter_boxes).extract_text(
-            y_tolerance=tolerance
-        )
+        filtered_data = crop.filter(filter_boxes).extract_text(y_tolerance=tolerance)
         filtered_data = filtered_data.replace(
             "Type of NONPRIORITY unsecured claim:", ""
         )
@@ -352,9 +333,7 @@ def get_checkboxes(crop: pdfplumber.pdf.Page) -> Dict:
             if "√" in box and any(s in box for s in property_options)
         ]
         property_values = [
-            s
-            for s in property_options
-            if any(s in box for box in property_values)
+            s for s in property_options if any(s in box for box in property_values)
         ]
 
         if claim_type:
@@ -394,9 +373,7 @@ def find_property_sections(
     rows = [
         {"top": int(row["top"]), "text": row["text"]}
         for row in rows
-        if len(row["text"]) > 2
-        and row["text"][0] in "P12345"
-        and row["text"][1] == "."
+        if len(row["text"]) > 2 and row["text"][0] in "P12345" and row["text"][1] == "."
     ]
     if len(rows) == 0:
         return None
@@ -483,9 +460,7 @@ def clean_ab_data(data: List):
 
 def get_3_to_8_form_a_b(
     page: pdfplumber.pdf.Page,
-) -> Tuple[
-    List[Union[Dict[str, Any], Dict[Optional[Any], str]]], list, Optional[dict]
-]:
+) -> Tuple[List[Union[Dict[str, Any], Dict[Optional[Any], str]]], list, Optional[dict]]:
     """Parse sections 3 to 8 of 106 A/B property form
 
     :param page:The pdf page to parse
@@ -538,9 +513,7 @@ def get_3_to_8_form_a_b(
     return results, debtors, totals
 
 
-def get_all_values_from_crop(
-    lines: List[Dict], page: pdfplumber.pdf.Page
-) -> List:
+def get_all_values_from_crop(lines: List[Dict], page: pdfplumber.pdf.Page) -> List:
     """Find all text inputs for each line in the pdf crop
 
     :param lines: Possible text inputs
@@ -587,15 +560,11 @@ def extract_other_creditors_d(
     )
 
     address = page.crop(addy_bbox).filter(keys_and_input_text).extract_text()
-    key = (
-        page.crop(key_bbox).filter(keys_and_input_text).extract_text().strip()
-    )
+    key = page.crop(key_bbox).filter(keys_and_input_text).extract_text().strip()
     acct = page.crop(acct_bbox).filter(keys_and_input_text).extract_text()
     for creditor in creditors:
         if creditor["key"] == key:
             other_creditors = creditor["other_creditors"]
-            other_creditors.append(
-                {"key": key, "address": address, "acct": acct}
-            )
+            other_creditors.append({"key": key, "address": address, "acct": acct})
             creditor["other_creditors"] = other_creditors
     return creditors

@@ -119,17 +119,9 @@ def filter_106_ab_content(obj: dict) -> Optional[bool]:
         if matches:
             return True
     if "text" in obj.keys() and "Wingdings" in obj["fontname"]:
-        if (
-            "cid:132" in obj["text"]
-            or "" in obj["text"]
-            or "n" in obj["text"]
-        ):
+        if "cid:132" in obj["text"] or "" in obj["text"] or "n" in obj["text"]:
             obj["text"] = "[√]"
-        if (
-            "cid:134" in obj["text"]
-            or "" in obj["text"]
-            or "o" in obj["text"]
-        ):
+        if "cid:134" in obj["text"] or "" in obj["text"] or "o" in obj["text"]:
             obj["text"] = "[]"
         return True
     if "text" in obj.keys():
@@ -148,17 +140,9 @@ def filter_boxes(obj: Dict) -> bool:
     :return: True
     """
     if "text" in obj.keys() and "Wingdings" in obj["fontname"]:
-        if (
-            "cid:132" in obj["text"]
-            or "" in obj["text"]
-            or "n" in obj["text"]
-        ):
+        if "cid:132" in obj["text"] or "" in obj["text"] or "n" in obj["text"]:
             obj["text"] = "\n[√] "
-        if (
-            "cid:134" in obj["text"]
-            or "" in obj["text"]
-            or "o" in obj["text"]
-        ):
+        if "cid:134" in obj["text"] or "" in obj["text"] or "o" in obj["text"]:
             obj["text"] = "\n[] "
     return True
 

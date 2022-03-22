@@ -105,7 +105,7 @@ def make_ab_totals(part_eight: List[str]) -> Dict:
     :param part_eight: Text for the final section of 106 A/B
     :return: Organized asset data
     """
-    part_eight = " ".join(part_eight) + " "
+    part_eight = f"{' '.join(part_eight)} "
     matches = re.findall(r"\$(.*?) ", part_eight)
 
     return {
