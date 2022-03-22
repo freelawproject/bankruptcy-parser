@@ -1,6 +1,11 @@
+#!/usr/bin/env python3
 import os
 from glob import iglob
 from unittest import TestCase
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
 
 from bankruptcy import (
     extract_all,
@@ -9,7 +14,6 @@ from bankruptcy import (
     extract_official_form_106_e_f,
     extract_official_form_106_sum,
 )
-
 
 class BankruptcyTest(TestCase):
     def setUp(self) -> None:
@@ -33,6 +37,8 @@ class BankruptcyTest(TestCase):
             results["form_106_d"]["error"], "Failed to find document."
         )
         self.assertEqual(len(results["form_106_ef"]["creditors"]), 22)
+        import pprint
+        pprint.pprint(results)
 
     def test_offical_form_106_sum(self):
         """Can we extract content from Official Form 106 Sum"""
