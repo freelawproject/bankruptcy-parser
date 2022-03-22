@@ -36,9 +36,6 @@ class BankruptcyTest(TestCase):
         results = extract_all(filepath=filepath)
         self.assertEqual(results["form_106_d"]["error"], "Failed to find document.")
         self.assertEqual(len(results["form_106_ef"]["creditors"]), 22)
-        import pprint
-
-        pprint.pprint(results)
 
     def test_offical_form_106_sum(self):
         """Can we extract content from Official Form 106 Sum"""
