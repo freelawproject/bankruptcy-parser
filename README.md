@@ -49,7 +49,7 @@ Quickstart
     from bankruptcy import extract_all
     results = extract_all(filepath=filepath)
 
-will return a dictionary of the forms (if found) and the contents of the document in the following format. 
+will return a dictionary of the forms (if found) and the contents of the document in the following format.
 
 
     {
@@ -58,7 +58,7 @@ will return a dictionary of the forms (if found) and the contents of the documen
      'form_106_ef': ...
      'form_106_sum': ...
      'info'...
-    }   
+    }  
 
 
 Some Notes
@@ -67,7 +67,7 @@ Some Notes
 This tool relies heavily on PDFPlumber.
 
 Somethings to keep in mind this parser has been tested only on digital PDFs
-from recent court filings (ie 2018 and earlier).  This parser does not work on scanned 
+from recent court filings (ie 2018 and earlier).  This parser does not work on scanned
 bankruptcy documents and was built and tested on documents from the Pacific Northwest.
 
 
@@ -87,7 +87,7 @@ Or install the latest dev version from github
     pip install git+https://github.com/freelawproject/bankruptcy.git@master
 
 
-Testing 
+Testing
 ==========
 
     python3 -m unittest test.tests

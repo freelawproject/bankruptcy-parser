@@ -15,6 +15,7 @@ from bankruptcy import (
     extract_official_form_106_sum,
 )
 
+
 class BankruptcyTest(TestCase):
     def setUp(self) -> None:
         self.root = os.path.dirname(os.path.realpath(__file__))
@@ -33,11 +34,10 @@ class BankruptcyTest(TestCase):
 
         filepath = f"{self.assets}/gov.uscourts.ganb.1125040.35.0.pdf"
         results = extract_all(filepath=filepath)
-        self.assertEqual(
-            results["form_106_d"]["error"], "Failed to find document."
-        )
+        self.assertEqual(results["form_106_d"]["error"], "Failed to find document.")
         self.assertEqual(len(results["form_106_ef"]["creditors"]), 22)
         import pprint
+
         pprint.pprint(results)
 
     def test_offical_form_106_sum(self):
@@ -58,7 +58,10 @@ class BankruptcyTest(TestCase):
         self.assertEqual(
             len(results["creditors"]), 19, msg="Failed to extract creditors"
         )
-        self.assertEqual(results["creditors"][-1]["debtor"], ['At least one of the debtors and another'])
+        self.assertEqual(
+            results["creditors"][-1]["debtor"],
+            ["At least one of the debtors and another"],
+        )
 
     def test_official_form_106_d(self):
         """Can we extract secured creditors from form 106D"""

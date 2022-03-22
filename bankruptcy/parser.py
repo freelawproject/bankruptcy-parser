@@ -80,12 +80,8 @@ def extract_official_form_106_e_f(
 
         page, lines = get_page_and_lines(file.name)
 
-        results["debtor1"] = crop_and_extract(
-            page, lines[0], adjust=True, up_shift=30
-        )
-        results["debtor2"] = crop_and_extract(
-            page, lines[1], adjust=True, up_shift=30
-        )
+        results["debtor1"] = crop_and_extract(page, lines[0], adjust=True, up_shift=30)
+        results["debtor2"] = crop_and_extract(page, lines[1], adjust=True, up_shift=30)
         for line in lines:
             if 498 < line["width"] < 510:
                 section += 1
@@ -165,9 +161,7 @@ def extract_official_form_106_d(
             if line["width"] > 530:
                 # Sometimes there are weird lines. Boxes are not lines
                 if len(markers) > 4:
-                    creditors = extract_other_creditors_d(
-                        page, markers, creditors
-                    )
+                    creditors = extract_other_creditors_d(page, markers, creditors)
                 markers = []
 
         # Main Sections
