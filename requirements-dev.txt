@@ -10,7 +10,7 @@ packaging==20.9
 pathspec==0.8.1
 pluggy==0.13.1
 pycodestyle==2.6.0
-pycryptodome==3.10.1
+pycryptodome==3.16.0
 pyflakes==3.0.1
 pylint
 pylint-json2html==0.2.0
