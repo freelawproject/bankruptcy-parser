@@ -8,7 +8,7 @@ mypy
 mypy-extensions==0.4.3
 packaging==20.9
 pathspec==0.8.1
-pluggy==0.13.1
+pluggy==1.0.0
 pycodestyle==2.6.0
 pycryptodome==3.16.0
 pyflakes==3.0.1
