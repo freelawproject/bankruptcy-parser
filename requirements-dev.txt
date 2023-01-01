@@ -18,4 +18,4 @@ pyparsing==2.4.7
 pytest==6.2.2
 setuptools
 toml==0.10.2
-wrapt==1.12.1
+wrapt==1.14.1
