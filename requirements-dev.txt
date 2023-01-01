@@ -3,7 +3,7 @@ attrs==20.3.0
 click==7.1.2
 flake8==3.8.4
 iniconfig==1.1.1
-MarkupSafe==1.1.1
+MarkupSafe==2.1.1
 mypy
 mypy-extensions==0.4.3
 packaging==20.9
