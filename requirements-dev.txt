@@ -6,7 +6,7 @@ iniconfig==1.1.1
 MarkupSafe==1.1.1
 mypy
 mypy-extensions==0.4.3
-packaging==20.9
+packaging==22.0
 pathspec==0.8.1
 pluggy==0.13.1
 pycodestyle==2.6.0
