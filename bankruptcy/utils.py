@@ -125,7 +125,7 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
         t_page = PageObject.createBlankPage(None, width, height * (last - first + 1))
         length = last - first
 
-        if length == 1:
+        if length == 0:
             writer.addPage(page)
             with open(temp_output, "wb") as file:
                 writer.write(file)
