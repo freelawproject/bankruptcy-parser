@@ -105,7 +105,7 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
                 continue
             if text[-300:].lower().find("page") == -1:
                 continue
-            pages.append(page.page_number)
+            pages.append(page.page_number - 1)
 
     if not pages:
         return False
@@ -113,38 +113,51 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
     writer = PdfFileWriter()
     with open(filepath, "rb") as pdf_obj:
         pdf = PdfFileReader(pdf_obj)
-        first = pages[0] - 1
-        last = pages[-1] - 1
-        if first == last:
-            last = first + 1
 
-        page = pdf.getPage(first)  # We pick the second page here
-        height = page.mediaBox.getHeight()
-        width = page.mediaBox.getWidth()
-
-        t_page = PageObject.createBlankPage(None, width, height * (last - first + 1))
-        length = last - first
-
-        if length == 1:
+        # Extract single page form and return it
+        if len(pages) == 1:
             writer.addPage(page)
             with open(temp_output, "wb") as file:
                 writer.write(file)
-        else:
-            for pg_number in range(first, last):
-                page = pdf.getPage(pg_number)
-                t_page.mergeScaledTranslatedPage(
-                    page2=page, scale=1, tx=0, ty=height * length, expand=False
-                )
-                length -= 1
-                if not length:
-                    last_page = pdf.getPage(last)
-                    t_page.mergePage(last_page)
-                    writer.addPage(t_page)
+            print(f"Extracted {form}, on page {pages[0] - 1}")
+            return True
 
-            with open(temp_output, "wb") as file:
-                writer.write(file)
+        # Convert and merge multiple pages into a single page
+        # Create first page and all the content behind it
+        page = pdf.getPage(pages[0])
+        t_page = PageObject.createBlankPage(
+            pdf=None,
+            width=page.mediaBox.getWidth(),
+            height=page.mediaBox.getHeight() * len(pages),
+        )
 
-    print(f"Converted {form}, with {1+last-first} pages, {first} to {last}")
+        length = len(pages) - 1
+        SCALE_FACTOR = 1
+        TRANSLATION_X = 0
+        for pg_number in range(pages[0], pages[-1]):
+            page = pdf.getPage(pg_number)
+            TRANSLATION_Y = page.mediaBox.getHeight() * length
+
+            t_page.mergeScaledTranslatedPage(
+                page2=page,
+                scale=SCALE_FACTOR,
+                tx=TRANSLATION_X,
+                ty=TRANSLATION_Y,
+                expand=False,
+            )
+            length -= 1
+            if not length:
+                last_page = pdf.getPage(pages[-1])
+                t_page.mergePage(last_page)
+                writer.addPage(t_page)
+
+        with open(temp_output, "wb") as file:
+            writer.write(file)
+
+    print(
+        f"Converted {form}, with {1+pages[-1]-pages[0]} pages,"
+        f" {pages[0]} to {pages[-1]}"
+    )
     return True
 
 
