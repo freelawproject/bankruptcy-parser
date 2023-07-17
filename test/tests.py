@@ -50,7 +50,6 @@ class BankruptcyTest(TestCase):
 
         self.assertTrue(success, msg="Accidentally extracted Official Form 106J")
 
-
     def test_can_we_handle_missing_checkboxes(self):
         """Can we handle partially bad PDF can still return content?"""
 
