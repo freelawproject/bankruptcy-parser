@@ -101,9 +101,10 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
     with pdfplumber.open(filepath) as pdf:
         for page in pdf.pages:
             text = page.extract_text()
-            if text[-300:].find(form) == -1:
-                continue
-            if text[-300:].lower().find("page") == -1:
+            pattern = r"(?<!\w)(?:\(|\b){}(?:\)|\b)(?!\w(.*Official Form))".format(
+                re.escape(form)
+            )
+            if not re.findall(pattern, text[-300:]):
                 continue
             pages.append(page.page_number - 1)
 
@@ -116,7 +117,7 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
 
         # Extract single page form and return it
         if len(pages) == 1:
-            writer.addPage(page)
+            writer.addPage(pdf.getPage(pages[0]))
             with open(temp_output, "wb") as file:
                 writer.write(file)
             print(f"Extracted {form}, on page {pages[0] - 1}")
