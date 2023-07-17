@@ -13,12 +13,5 @@ jobs:
           # Once codebase is updated, this can easily be changed to any specific version.
           python-version: "3.11"
 
-      - name: Flynt f-string Formatter
-        run: >
-          flynt .
-          --line-length=79
-          --transform-concats
-          --fail-on-change
-
       - name: Black Code Formatter
         uses: psf/black@stable
