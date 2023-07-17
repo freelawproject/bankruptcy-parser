@@ -101,10 +101,9 @@ def convert_pdf(filepath: str, temp_output: str, form: str) -> bool:
     with pdfplumber.open(filepath) as pdf:
         for page in pdf.pages:
             text = page.extract_text()
-            pattern = r"(?<!\w)(?:\(|\b){}(?:\)|\b)(?!\w(.*Official Form))".format(
-                re.escape(form)
-            )
-            if not re.findall(pattern, text[-300:]):
+            pattern = r"{}(?:\)|\b)(?![\s\S]*Official Form)".format(re.escape(form))
+            matches = re.findall(pattern, text, re.MULTILINE)
+            if not matches:
                 continue
             pages.append(page.page_number - 1)
 
