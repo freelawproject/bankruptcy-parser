@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import os
 from glob import iglob
+from tempfile import NamedTemporaryFile
 from unittest import TestCase
 import sys
+
+from bankruptcy.utils import convert_pdf
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
@@ -28,6 +31,24 @@ class BankruptcyTest(TestCase):
         filepath = f"{self.root}/test_assets/gov.uscourts.orb.507503.11.0.pdf"
         results = extract_all(filepath=filepath)
         self.assertFalse(results)
+
+    def test_avoid_wrong_document(self):
+        """Can we avoid accidentally finding Form 119?"""
+
+        with NamedTemporaryFile(suffix=".pdf") as file:
+            filepath = f"{self.assets}/gov.uscourts.orb.473342.1.0.pdf"
+            success = convert_pdf(filepath, file.name, "Official Form 119")
+
+        self.assertFalse(success, msg="Accidentally found Form 119")
+
+    def test_extract_single_page_form(self):
+        """Can we extract single page form?"""
+
+        with NamedTemporaryFile(suffix=".pdf") as file:
+            filepath = f"{self.assets}/gov.uscourts.orb.473342.1.0.pdf"
+            success = convert_pdf(filepath, file.name, "Official Form 106G")
+
+        self.assertTrue(success, msg="Accidentally extracted Official Form 106J")
 
     def test_can_we_handle_missing_checkboxes(self):
         """Can we handle partially bad PDF can still return content?"""
